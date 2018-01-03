@@ -22,6 +22,7 @@ import org.springframework.web.reactive.function.server.ServerResponse
 import org.springframework.web.reactive.function.server.router
 import reactor.core.publisher.Flux
 import reactor.core.publisher.SynchronousSink
+import java.net.URI
 import java.time.Duration
 import java.util.*
 
@@ -70,6 +71,7 @@ class WebConfiguration(val ms: MovieService) {
 
     @Bean
     fun routes() = router {
+        GET("/", { ServerResponse.permanentRedirect(URI("/movies")).build() })
         GET("/movies", { ServerResponse.ok().body(ms.all(), Movie::class.java) })
         GET("/movies/{id}", { ServerResponse.ok().body(ms.byId(it.pathVariable("id")), Movie::class.java) })
         GET("/movies/{id}/events", { ServerResponse.ok().contentType(MediaType.TEXT_EVENT_STREAM).body(ms.events(it.pathVariable("id")), MovieEvent::class.java) })
